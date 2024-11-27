@@ -19,19 +19,26 @@ export const authApi = createApi({
         }),
         loginUser: builder.mutation({
             query: (inputData) => ({
-                url:"login",
-                method:"POST",
-                body:inputData
+              url: "login",
+              method: "POST",
+              body: inputData
             }),
-            async onQueryStarted(_, {queryFulfilled, dispatch}) {
-                try {
-                    const result = await queryFulfilled;
-                    dispatch(userLoggedIn({user:result.data.user}));
-                } catch (error) {
-                    console.log(error);
+            async onQueryStarted(_, { queryFulfilled, dispatch }) {
+              try {
+                // Wait for the query to fulfill
+                const result = await queryFulfilled;  // 'result' contains the full response
+          
+                // Access the data object from the response (the user object should be here)
+                if (result && result.data) {
+                  console.log("API Response:", result.data);  // Log the full response data
+                  dispatch(userLoggedIn({ user: result.data.user }));  // Dispatch the user data to the Redux store
                 }
+              } catch (error) {
+                console.error("Error during login:", error);  // Handle any errors that occur during the API call
+              }
             }
-        }),
+          }),
+          
         logoutUser: builder.mutation({
             query: () => ({
                 url:"logout",

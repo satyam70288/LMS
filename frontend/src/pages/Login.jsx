@@ -115,7 +115,7 @@ const Login = () => {
                             <div className="space-y-1">
                                 <Label htmlFor="email">Email</Label>
                                 <Input id="email"
-                                    required="true"
+                                    required={true}
                                     name="email"
                                     value={signUpInput.email}
                                     type="email"
