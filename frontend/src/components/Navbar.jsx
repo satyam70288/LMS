@@ -17,6 +17,7 @@ import { useLogoutUserMutation } from "@/features/api/authApi";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
 import { Separator } from "@radix-ui/react-dropdown-menu";
+import DarkMode from "@/DarkMode";
 
 const Navbar = () => {
   const user = useSelector((state) => state.auth.user);
@@ -93,6 +94,7 @@ const Navbar = () => {
               <Button onClick={() => navigate("/signup")}>Signup</Button>
             </div>
           )}
+          <DarkMode/>
         </div>
       </div>
 
