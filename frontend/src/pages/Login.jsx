@@ -64,27 +64,27 @@ const Login = () => {
             console.error("API Error:", error);
         }
     };
-    useEffect(() => {
-        if(registerIsSuccess && registerData){
-          toast.success(registerData.message || "Signup successful.")
-        }
-        if(registerError){
-          toast.error(registerError.data.message || "Signup Failed");
-        }
-        if(loginIsSuccess && loginData){
-          toast.success(loginData.message || "Login successful.");
-        }
-        if(loginError){ 
-          toast.error(loginError.data.message || "login Failed");
-        }
-      }, [
-        loginIsLoading,
-        registerIsLoading,
-        loginData,
-        registerData,
-        loginError,
-        registerError,
-      ]);
+    // useEffect(() => {
+    //     if(registerIsSuccess && registerData){
+    //       toast.success(registerData.message || "Signup successful.")
+    //     }
+    //     if(registerError){
+    //       toast.error(registerError.data.message || "Signup Failed");
+    //     }
+    //     if(loginIsSuccess && loginData){
+    //       toast.success(loginData.message || "Login successful.");
+    //     }
+    //     if(loginError){ 
+    //       toast.error(loginError.data.message || "login Failed");
+    //     }
+    //   }, [
+    //     loginIsLoading,
+    //     registerIsLoading,
+    //     loginData,
+    //     registerData,
+    //     loginError,
+    //     registerError,
+    //   ]);
     
     
     return (

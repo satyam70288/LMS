@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
@@ -8,92 +8,129 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/components/ui/dialog"; import React from 'react'
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Loader } from 'lucide-react';
-import Course from './Course';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Loader2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import Course from "./Course";
+import {
+    useLoadUserQuery,
+    useUpdateUserMutation,
+} from "@/features/api/authApi";
+import { toast } from "sonner";
 
 const Profile = () => {
-    const isLoading = true
-    const user = {
-        enrolledCourses: [
-            {
-                courseId: "101",
-                title: "JavaScript Essentials",
-                description: "Learn the basics of JavaScript, including variables, functions, and DOM manipulation.",
-                instructor: "John Doe",
-                duration: "4 weeks",
-                progress: 75, // Progress in percentage
-                enrolledDate: "2024-11-01",
-                isCompleted: false,
-            },
-            {
-                courseId: "102",
-                title: "React for Beginners",
-                description: "A beginner-friendly course to master React and build interactive UIs.",
-                instructor: "Jane Smith",
-                duration: "6 weeks",
-                progress: 40,
-                enrolledDate: "2024-11-10",
-                isCompleted: false,
-            },
-            {
-                courseId: "103",
-                title: "Advanced Node.js",
-                description: "Deep dive into Node.js and build scalable backend applications.",
-                instructor: "Alice Johnson",
-                duration: "8 weeks",
-                progress: 100,
-                enrolledDate: "2024-09-15",
-                isCompleted: true,
-            },
-        ],
+    const [name, setName] = useState("");
+    const [profilePhoto, setProfilePhoto] = useState("");
+
+    const { data, isLoading, refetch } = useLoadUserQuery();
+    console.log("data", data);
+    const [
+        updateUser,
+        {
+            data: updateUserData,
+            isLoading: updateUserIsLoading,
+            isError,
+            error,
+            isSuccess,
+        },
+    ] = useUpdateUserMutation();
+
+    console.log(data);
+
+    const onChangeHandler = (e) => {
+        const file = e.target.files?.[0];
+        if (file) setProfilePhoto(file);
     };
 
-    console.log(user.enrolledCourses);
+    const updateUserHandler = async () => {
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("profilePhoto", profilePhoto);
+        await updateUser(formData);
+    };
 
-    const onChangeHandler = () => { }
+    useEffect(() => {
+        refetch();
+    }, []);
+
+    useEffect(() => {
+        if (isSuccess) {
+            refetch();
+            toast.success(data.message || "Profile updated.");
+        }
+        if (isError) {
+            toast.error(error.message || "Failed to update profile");
+        }
+    }, [error, updateUserData, isSuccess, isError]);
+
+    if (isLoading) return <h1>Profile Loading...</h1>;
+
+    const user = data && data.user;
+
+    console.log(user);
+
+
     return (
-        <div className='max-w-4xl mx-auto my-24 px-4'>
-            <h1 className='font-bold text-2xl text-center md:text-left'> PROFILE</h1>
-            <div className='flex flex-col md:flex-row  items-center md:items-start gap-8 mt-8'>
-                <div className='flex flex-col items-center'>
-                    <Avatar className='h-24 w-24  md:h-32 md:w-32 mb-4 overflow-hidden rounded-full'>
-                        <AvatarImage src="https://github.com/shadcn.png" />
+        <div className="max-w-4xl mx-auto px-4 my-10">
+            <h1 className="font-bold text-2xl text-center md:text-left">PROFILE</h1>
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-8 my-5">
+                <div className="flex flex-col items-center">
+                    <Avatar className="h-24 w-24 md:h-32 md:w-32 mb-4">
+                        <AvatarImage
+                            src={user ? `http://localhost:8000/${user?.photoUrl}` : "https://github.com/shadcn.png"}
+                            alt="@shadcn"
+                        />
+
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                 </div>
                 <div>
-                    <div className='mb-2'>
-                        <h1 className='font-semibold text-gray-600 dark:text-gray-100'>
-                            Name:<span className='font-normal text-gray-500 dark:text-gray-300 ml-2'>satyam Bharti</span>
+                    <div className="mb-2">
+                        <h1 className="font-semibold text-gray-900 dark:text-gray-100 ">
+                            Name:
+                            <span className="font-normal text-gray-700 dark:text-gray-300 ml-2">
+                                {user?.name}
+                            </span>
                         </h1>
                     </div>
-                    <div className='mb-2'>
-                        <h1 className='font-semibold text-gray-600 dark:text-gray-100'>
-                            Email:<span className='font-normal text-gray-500 dark:text-gray-300 ml-2'>satyam@Bharti</span>
+                    <div className="mb-2">
+                        <h1 className="font-semibold text-gray-900 dark:text-gray-100 ">
+                            Email:
+                            <span className="font-normal text-gray-700 dark:text-gray-300 ml-2">
+                                {user?.email}
+                            </span>
                         </h1>
-                    </div><div className='mb-2'>
-                        <h1 className='font-semibold text-gray-600 dark:text-gray-100'>
-                            Role:<span className='font-normal text-gray-500 dark:text-gray-300 ml-2'>instructor</span>
+                    </div>
+                    <div className="mb-2">
+                        <h1 className="font-semibold text-gray-900 dark:text-gray-100 ">
+                            Role:
+                            <span className="font-normal text-gray-700 dark:text-gray-300 ml-2">
+                                {user?.role.toUpperCase()}
+                            </span>
                         </h1>
                     </div>
                     <Dialog>
                         <DialogTrigger asChild>
-                            <Button size='sm' className='mt-2'>Edit Profile</Button>
+                            <Button size="sm" className="mt-2">
+                                Edit Profile
+                            </Button>
                         </DialogTrigger>
-                        <DialogContent className="p-4 bg-white rounded-lg shadow-lg z-50">
+                        <DialogContent>
                             <DialogHeader>
-                                <DialogTitle>Edit profile</DialogTitle>
-                                <DialogDescription>Make change to  your profile here click save where you are done</DialogDescription>
+                                <DialogTitle>Edit Profile</DialogTitle>
+                                <DialogDescription>
+                                    Make changes to your profile here. Click save when you're
+                                    done.
+                                </DialogDescription>
                             </DialogHeader>
                             <div className="grid gap-4 py-4">
                                 <div className="grid grid-cols-4 items-center gap-4">
                                     <Label>Name</Label>
                                     <Input
                                         type="text"
-                                        value={name}
+                                        // value={name}
                                         onChange={(e) => setName(e.target.value)}
                                         placeholder="Name"
                                         className="col-span-3"
@@ -110,10 +147,18 @@ const Profile = () => {
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button disable={isLoading}>
-                                    {
-                                        isLoading ? <Loader className='mr-2 h-4 w-4 animate-spin'>Please wait...</Loader> : "Save Changes"
-                                    }
+                                <Button
+                                    disabled={updateUserIsLoading}
+                                    onClick={updateUserHandler}
+                                >
+                                    {updateUserIsLoading ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please
+                                            wait
+                                        </>
+                                    ) : (
+                                        "Save Changes"
+                                    )}
                                 </Button>
                             </DialogFooter>
                         </DialogContent>
@@ -123,17 +168,17 @@ const Profile = () => {
             <div>
                 <h1 className="font-medium text-lg">Courses you're enrolled in</h1>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-5">
-                    {user.enrolledCourses.length === 0 ? (
+                    {user?.enrolledCourses.length === 0 ? (
                         <h1>You haven't enrolled yet</h1>
                     ) : (
-                        user.enrolledCourses.map((course) => (
+                        user?.enrolledCourses.map((course) => (
                             <Course course={course} key={course._id} />
                         ))
                     )}
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default Profile
+export default Profile;

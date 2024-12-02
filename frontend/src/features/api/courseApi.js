@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const COURSE_API = "http://localhost:8080/api/v1/course";
+const COURSE_API = "http://localhost:8000/api/v1/course";
 
 export const courseApi = createApi({
   reducerPath: "courseApi",
@@ -12,7 +12,7 @@ export const courseApi = createApi({
   endpoints: (builder) => ({
     createCourse: builder.mutation({
       query: ({ courseTitle, category }) => ({
-        url: "",
+        url: "/admin",
         method: "POST",
         body: { courseTitle, category },
       }),
@@ -48,14 +48,14 @@ export const courseApi = createApi({
     }),
     getCreatorCourse: builder.query({
       query: () => ({
-        url: "",
+        url: "/admin",
         method: "GET",
       }),
       providesTags: ["Refetch_Creator_Course"],
     }),
     editCourse: builder.mutation({
       query: ({ formData, courseId }) => ({
-        url: `/${courseId}`,
+        url: `/admin/${courseId}`,
         method: "PUT",
         body: formData,
       }),
@@ -63,7 +63,7 @@ export const courseApi = createApi({
     }),
     getCourseById: builder.query({
       query: (courseId) => ({
-        url: `/${courseId}`,
+        url: `/admin/${courseId}`,
         method: "GET",
       }),
     }),
