@@ -21,6 +21,7 @@ import { useEffect, useState } from "react"
 import {  useNavigate } from "react-router-dom"
 
 const Login = () => {
+    const navigate=useNavigate()
     const [loginInput, setLoginInput] = useState({ email: "", password: "" })
     const [signUpInput, setSignUpInput] = useState({ name: "", email: "", password: "" })
     const [
@@ -32,7 +33,6 @@ const Login = () => {
           isSuccess: registerIsSuccess,
         },
       ] = useRegisterUserMutation();  
-        console.log(registerUser)
     const [
         loginUser,
         {
@@ -64,27 +64,28 @@ const Login = () => {
             console.error("API Error:", error);
         }
     };
-    // useEffect(() => {
-    //     if(registerIsSuccess && registerData){
-    //       toast.success(registerData.message || "Signup successful.")
-    //     }
-    //     if(registerError){
-    //       toast.error(registerError.data.message || "Signup Failed");
-    //     }
-    //     if(loginIsSuccess && loginData){
-    //       toast.success(loginData.message || "Login successful.");
-    //     }
-    //     if(loginError){ 
-    //       toast.error(loginError.data.message || "login Failed");
-    //     }
-    //   }, [
-    //     loginIsLoading,
-    //     registerIsLoading,
-    //     loginData,
-    //     registerData,
-    //     loginError,
-    //     registerError,
-    //   ]);
+    useEffect(() => {
+        if(registerIsSuccess && registerData){
+          toast.success(registerData || "Signup successful.")
+        }
+        if(registerError){
+          toast.error(registerError || "Signup Failed");
+        }
+        if(loginIsSuccess && loginData){
+          toast.success(loginData.message || "Login successful.");
+          navigate("/");
+        }
+        if(loginError){ 
+          toast.error(loginError.data.message || "login Failed");
+        }
+      }, [
+        loginIsLoading,
+        registerIsLoading,
+        loginData,
+        registerData,
+        loginError,
+        registerError,
+      ]);
     
     
     return (

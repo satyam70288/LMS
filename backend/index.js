@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import userRoutes from './routes/user.routes.js';
 import courseRoute from "./routes/Course/index.js";
+import mediaRoute from "./routes/media.routes.js";
 import connectDB from './Database/db.js';
 import { errorConverter, errorHandler } from './middlewares/error.js';
 import cookieParser from 'cookie-parser';
@@ -20,8 +21,8 @@ console.log(path.join(__dirname, 'public'))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-    origin: 'http://localhost:5174', // Replace with your frontend's URL
-    credentials: true,
+    origin: '*',
+    credentials:true
 }));
 app.use(cookieParser());
 // Serve static files from the 'public' directory
@@ -30,6 +31,7 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 // Routes
 app.use('/api/v1/user', userRoutes);
 app.use("/api/v1/course", courseRoute);
+app.use("/api/v1/media", mediaRoute);
 
 // Error Handling
 app.use(errorConverter);
